@@ -4,10 +4,24 @@ import React from "react";
 import { nanoid } from "nanoid";
 
 function App() {
-  const [random_numbers, set_random_numbers] = React.useState(new_dice());
+  const [dice, set_dice] = React.useState(new_dice());
+  const [tenzies, set_tenzies] = React.useState(false);
+
+  React.useEffect(() => {
+    let won = true;
+    dice.forEach((die) => {
+      if (die.value != dice[0].value || die.isHeld == false) {
+        won = false;
+      }
+    });
+    if (won) {
+      set_tenzies(true);
+      console.log("You won!");
+    }
+  }, [dice]);
 
   function roll_dice() {
-    set_random_numbers((ran_nums) => {
+    set_dice((ran_nums) => {
       return ran_nums.map((item) => {
         if (!item.isHeld) {
           return { ...item, value: Math.ceil(Math.random() * 6) };
@@ -31,7 +45,7 @@ function App() {
   }
 
   function die_click(die) {
-    set_random_numbers((ran_nums) => {
+    set_dice((ran_nums) => {
       return ran_nums.map((item) => {
         if (die === item.id) {
           return { ...item, isHeld: !item.isHeld };
@@ -50,7 +64,7 @@ function App() {
         current value between rolls.
       </p>
       <div className="die-grid">
-        {random_numbers.map((x) => (
+        {dice.map((x) => (
           <Die
             key={x.id}
             value={x.value}
